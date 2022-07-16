@@ -6,6 +6,6 @@ export interface ArtistsStore {
   all: () => IArtist[];
   findById: (id: string) => IArtist;
   create: (params: CreateArtistDto) => IArtist;
-  update: (params: UpdateArtistDto) => IArtist;
+  update: (params: UpdateArtistDto, id: string) => IArtist;
   delete: (id: string) => string;
 }

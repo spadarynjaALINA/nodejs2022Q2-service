@@ -4,6 +4,10 @@ import { AlbumsService } from './services/albums.service';
 
 @Module({
   controllers: [AlbumsController],
-  providers: [AlbumsService],
+  providers: [AlbumsService,
+    {
+      provide: 'AlbumsStore',
+      useClass: InMemoryAlbumsStore,
+    },],
 })
 export class AlbumsModule {}

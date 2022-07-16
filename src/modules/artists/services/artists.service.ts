@@ -1,12 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-// import { Artist, ArtistDocument } from '../schemas/artist.schema';
-import { Model } from 'mongoose';
 import { UpdateArtistDto } from '../dto/update-artist.dto';
 import { ArtistsStore } from '../interfaces/artists.interface';
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { IArtist } from '../interfaces/artist.interface';
-import { InMemoryArtistsStore } from '../store/artists.storage';
 import { ArtistDto } from '../dto/artist.tdo';
 
 @Injectable()
@@ -29,7 +25,7 @@ export class ArtistsService {
     return this.storage.findById(id);
   }
 
-  async update(updateArtistDto: UpdateArtistDto): Promise<IArtist> {
-    return this.storage.update(updateArtistDto);
+  async update(updateArtistDto: UpdateArtistDto, id: string): Promise<IArtist> {
+    return this.storage.update(updateArtistDto, id);
   }
 }

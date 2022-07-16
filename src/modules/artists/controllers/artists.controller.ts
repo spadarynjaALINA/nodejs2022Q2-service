@@ -40,13 +40,16 @@ export class ArtistsController {
     return this.artistsService.create(createArtistDto);
   }
 
-  @Put()
-  update(@Body() updateArtistDto: UpdateArtistDto) {
-    return this.artistsService.update(updateArtistDto);
+  @Put(':id')
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateArtistDto: UpdateArtistDto,
+  ) {
+    return this.artistsService.update(updateArtistDto, id);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string): Promise<string> {
+  delete(@Param('id', ParseUUIDPipe) id: string): Promise<string> {
     return this.artistsService.delete(id);
   }
 }

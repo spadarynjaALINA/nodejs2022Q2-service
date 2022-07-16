@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
-
 import { ArtistsController } from './controllers/artists.controller';
-import { ArtistsStore } from './interfaces/artists.interface';
 import { ArtistsService } from './services/artists.service';
 import { InMemoryArtistsStore } from './store/artists.storage';
 
