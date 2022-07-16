@@ -1,9 +1,18 @@
 import { Module } from '@nestjs/common';
-import { ArtistsService } from './artists.service';
-import { ArtistsController } from './artists.controller';
+
+import { ArtistsController } from './controllers/artists.controller';
+import { ArtistsStore } from './interfaces/artists.interface';
+import { ArtistsService } from './services/artists.service';
+import { InMemoryArtistsStore } from './store/artists.storage';
 
 @Module({
-  providers: [ArtistsService],
-  controllers: [ArtistsController]
+  providers: [
+    ArtistsService,
+    {
+      provide: 'ArtistsStore',
+      useClass: InMemoryArtistsStore,
+    },
+  ],
+  controllers: [ArtistsController],
 })
 export class ArtistsModule {}
