@@ -13,7 +13,6 @@ import { ArtistDto } from '../dto/artist.tdo';
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { UpdateArtistDto } from '../dto/update-artist.dto';
 import { IArtist } from '../interfaces/artist.interface';
-// import { Artist } from '../schemas/artist.schema';
 import { ArtistsService } from '../services/artists.service';
 
 @Controller('artists')
@@ -49,7 +48,9 @@ export class ArtistsController {
   }
 
   @Delete(':id')
-  delete(@Param('id', ParseUUIDPipe) id: string): Promise<string> {
-    return this.artistsService.delete(id);
+  async delete(@Param('id', ParseUUIDPipe) id: string): Promise<string | void> {
+    const track = await this.artistsService.delete(id);
+    if (!track) return this.error.notFound('Track');
+    return track;
   }
 }

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UpdateArtistDto } from '../dto/update-artist.dto';
-import { ArtistsStore } from '../interfaces/artists.interface';
+import { ArtistsStore } from '../schemas/artists.interface';
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { IArtist } from '../interfaces/artist.interface';
 import { ArtistDto } from '../dto/artist.tdo';

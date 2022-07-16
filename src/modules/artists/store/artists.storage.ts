@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ArtistsStore } from '../interfaces/artists.interface';
+import { ArtistsStore } from '../schemas/artists.interface';
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { UpdateArtistDto } from '../dto/update-artist.dto';
 import { IArtist } from '../interfaces/artist.interface';

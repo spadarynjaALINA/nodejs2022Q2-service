@@ -1,6 +1,6 @@
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { UpdateArtistDto } from '../dto/update-artist.dto';
-import { IArtist } from './artist.interface';
+import { IArtist } from '../interfaces/artist.interface';
 
 export interface ArtistsStore {
   all: () => IArtist[];
