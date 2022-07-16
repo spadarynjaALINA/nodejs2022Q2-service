@@ -1,6 +1,7 @@
 import {
   IsArray,
   IsEmail,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -10,29 +11,21 @@ import {
 export class RegisterDto {
   @IsString()
   @IsNotEmpty()
-  firstName: string;
+  id: string;
 
   @IsString()
   @IsNotEmpty()
-  lastName: string;
+  login: string;
 
   @Length(8)
   @IsNotEmpty()
   password: string;
 
-  @IsEmail()
+  @IsInt()
   @IsNotEmpty()
-  email: string;
-
-  @IsArray()
-  @IsOptional()
-  favoriteArtist: string[];
-
-  @IsArray()
-  @IsOptional()
-  favoriteTrack: string[];
-
-  @IsArray()
-  @IsOptional()
-  favoriteAlbum: string[];
+  version: string;
+  @IsInt()
+  createdAt: number;
+  @IsInt()
+  updatedAt: number;
 }

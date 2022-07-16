@@ -1,4 +1,4 @@
-import { IsBoolean, IsInt, IsString } from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
 
 export class ArtistDto {
   @IsString()
@@ -7,11 +7,4 @@ export class ArtistDto {
   name: string;
   @IsBoolean()
   grammy: boolean;
-  @IsInt()
-  version: number; // integer number, increments on update
-  @IsInt()
-  createdAt: number;
-  // timestamp of creation
-  @IsInt()
-  updatedAt: number; // timestamp of last update
 }

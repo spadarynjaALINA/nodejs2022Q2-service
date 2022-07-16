@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   ParseUUIDPipe,
   Post,
@@ -48,6 +49,7 @@ export class AlbumsController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   async delete(@Param('id', ParseUUIDPipe) id: string): Promise<string | void> {
     const track = await this.albumsService.delete(id);
     if (!track) return this.error.notFound('Track');

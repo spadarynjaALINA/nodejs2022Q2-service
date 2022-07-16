@@ -12,9 +12,6 @@ export class InMemoryArtistsStore implements ArtistsStore {
       name: 'name',
       id: '085f7d32-10c5-476e-9803-169dcb663e30',
       grammy: true,
-      version: 1,
-      createdAt: 1657961818145,
-      updatedAt: 1657961818145,
     },
   ];
 
@@ -26,13 +23,9 @@ export class InMemoryArtistsStore implements ArtistsStore {
     return artist;
   }
   create(artistDto: CreateArtistDto): IArtist {
-    const timestamp = Date.now();
     const newArtist = {
       ...artistDto,
       id: uuidv4(),
-      version: 1,
-      createdAt: timestamp,
-      updatedAt: timestamp,
     };
     this.artists.push(newArtist);
     return newArtist;
@@ -40,8 +33,6 @@ export class InMemoryArtistsStore implements ArtistsStore {
   update(params: UpdateArtistDto, id: string): ArtistDto {
     this.artists = this.artists.map((artist) => {
       if (artist.id === id) {
-        artist.version += 1;
-        artist.updatedAt = Date.now();
         return Object.assign(artist, params);
       }
       return artist;
