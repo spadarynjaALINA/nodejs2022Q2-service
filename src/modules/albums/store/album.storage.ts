@@ -49,7 +49,6 @@ export class InMemoryAlbumsStore implements AlbumsStore {
       });
       this.bd.favorites.albums.forEach((item) => {
         if (item === id) {
-          console.log('favorites');
           this.bd.favorites.albums.splice(
             this.bd.favorites.albums.indexOf(id),
             1,
@@ -58,30 +57,9 @@ export class InMemoryAlbumsStore implements AlbumsStore {
       });
       this.albums = this.albums.filter((Album) => Album.id !== id);
 
-      return await this.error.deleted('albums');
+      return this.error.deleted('albums');
     } else {
       return this.error.notFound('albums');
     }
   }
 }
-//  delete(id: string): string | void {
-//     const artist = this.findById(id);
-//     this.artists = this.artists.filter((artist) => artist.id !== id);
-//     this.bd.albums.forEach((album) => {
-//       if (album.artistId === id) album.artistId = null;
-//     });
-//     this.bd.tracks.forEach((track) => {
-//       console.log(track.artistId, id);
-//       if (track.artistId === id) track.artistId = null;
-//     });
-//     this.bd.favorites.artists.forEach((item) => {
-//       if (item === id) {
-//         console.log('infav', this.bd.favorites.artists.indexOf(id));
-//         this.bd.favorites.artists.splice(
-//           this.bd.favorites.artists.indexOf(id),
-//           1,
-//         );
-//       }
-//     });
-//     return !!artist ? this.error.deleted('artist') : null;
-//   }

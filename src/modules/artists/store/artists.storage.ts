@@ -43,22 +43,26 @@ export class InMemoryArtistsStore implements ArtistsStore {
   }
   delete(id: string): string | void {
     const artist = this.findById(id);
-    this.artists = this.artists.filter((artist) => artist.id !== id);
-    this.bd.albums.forEach((album) => {
-      if (album.artistId === id) album.artistId = null;
-    });
-    this.bd.tracks.forEach((track) => {
-      console.log(track.artistId, id);
-      if (track.artistId === id) track.artistId = null;
-    });
-    this.bd.favorites.artists.forEach((item) => {
-      if (item === id) {
-        this.bd.favorites.artists.splice(
-          this.bd.favorites.artists.indexOf(id),
-          1,
-        );
-      }
-    });
+    console.log(artist);
+    if (!!artist) {
+      this.bd.albums.forEach((album) => {
+        if (album.artistId === id) album.artistId = null;
+      });
+      this.bd.tracks.forEach((track) => {
+        console.log(track.artistId, id);
+        if (track.artistId === id) track.artistId = null;
+      });
+      this.bd.favorites.artists.forEach((item) => {
+        if (item === id) {
+          this.bd.favorites.artists.splice(
+            this.bd.favorites.artists.indexOf(id),
+            1,
+          );
+        }
+      });
+      this.artists = this.artists.filter((artist) => artist.id !== id);
+    }
+
     return !!artist ? this.error.deleted('artist') : null;
   }
 }

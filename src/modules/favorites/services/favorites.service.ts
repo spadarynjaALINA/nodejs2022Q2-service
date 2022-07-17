@@ -10,7 +10,7 @@ export class FavoritesService {
 
   async add(type: string, id: string): Promise<void> {
     console.log(type, id, 'services');
-    return await this.storage.add(type, id);
+    return this.storage.add(type, id);
   }
 
   async delete(type: string, id: string): Promise<string | void> {

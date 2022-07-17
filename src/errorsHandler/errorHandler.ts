@@ -25,7 +25,7 @@ export class ErrorHandler {
     throw new HttpException(
       {
         status: HttpStatus.CREATED,
-        error: `${type}  already exist`,
+        message: `${type}  already exist`,
       },
       HttpStatus.CREATED,
     );
@@ -46,7 +46,7 @@ export class ErrorHandler {
     throw new HttpException(
       {
         status: HttpStatus.NO_CONTENT,
-        error: `${item} has been deleted`,
+        message: `${item} has been deleted`,
       },
       HttpStatus.NO_CONTENT,
     );

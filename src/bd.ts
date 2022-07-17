@@ -32,7 +32,7 @@ export class BD {
     },
   ];
   favorites: FavoriteDto = {
-    artists: ['085f7d32-10c5-476e-9803-169dcb663e30'],
+    artists: [],
     albums: [],
     tracks: [],
   };

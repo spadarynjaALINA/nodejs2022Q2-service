@@ -28,6 +28,7 @@ export class FavoritesController {
   }
 
   @Post('/:type/:id')
+  @HttpCode(201)
   async add(
     @Param('type') type: string,
     @Param('id', ParseUUIDPipe) id: string,
@@ -36,6 +37,7 @@ export class FavoritesController {
   }
 
   @Delete('/:type/:id')
+  @HttpCode(204)
   async delete(
     @Param('type') type: string,
     @Param('id', ParseUUIDPipe) id: string,

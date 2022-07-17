@@ -4,7 +4,8 @@ export class UpdateArtistDto {
   @IsString()
   @IsOptional()
   name: string;
-  @IsOptional()
+
   @IsBoolean()
+  @IsOptional()
   grammy: boolean;
 }

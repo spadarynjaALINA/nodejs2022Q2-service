@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
+import { StatusCodes } from 'http-status-codes';
 import { BD } from 'src/bd';
 import { ErrorHandler } from 'src/errorsHandler/errorHandler';
 import { FavoritesRepsonse } from '../dto/add-favorites.dto';
@@ -17,7 +22,7 @@ export class InMemoryFavoritesStore implements FavoritesStore {
       albums: [],
       tracks: [],
     };
-    console.log('favs');
+
     for (const key in this.favorites) {
       console.log(this.favorites[key], favs[key]);
       this.favorites[key].forEach((item) => {
@@ -29,20 +34,15 @@ export class InMemoryFavoritesStore implements FavoritesStore {
 
   add(type: string, id: string): void {
     const typeEdit = `${type}s`;
-    console.log(
-      this.bd[typeEdit],
-      this.bd[typeEdit].find((item) => item.id === id),
-    );
-
     if (!this.bd[typeEdit].find((item) => item.id === id)) {
-      console.log('not in base');
-      return this.error.notExist(type);
+
     } else if (this.favorites[typeEdit].find((item: string) => item === id)) {
       console.log('already in favorites');
       return this.error.alreadyExist(type);
     } else {
       this.favorites[typeEdit].push(id);
       console.log('added');
+      HttpStatus.CREATED;
       return this.error.alreadyExist(type);
     }
   }
@@ -54,9 +54,9 @@ export class InMemoryFavoritesStore implements FavoritesStore {
         (favorite: string) => favorite !== id,
       );
 
-      return await this.error.alreadyExist(type);
+      return this.error.alreadyExist(type);
     } else {
-      return await this.error.deleted(type);
+      return this.error.deleted(type);
     }
   }
 
