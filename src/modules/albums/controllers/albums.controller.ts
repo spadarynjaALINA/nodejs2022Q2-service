@@ -16,7 +16,7 @@ import { UpdateAlbumDto } from '../dto/update-albums.dto';
 import { IAlbum } from '../interfaces/album.interface';
 import { AlbumsService } from '../services/albums.service';
 
-@Controller('albums')
+@Controller('album')
 export class AlbumsController {
   error = new ErrorHandler();
   constructor(private readonly albumsService: AlbumsService) {}
@@ -49,10 +49,8 @@ export class AlbumsController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
   async delete(@Param('id', ParseUUIDPipe) id: string): Promise<string | void> {
-    const track = await this.albumsService.delete(id);
-    if (!track) return this.error.notFound('Track');
-    return track;
+    console.log(await this.albumsService.delete(id), 'controller');
+    return await this.albumsService.delete(id);
   }
 }

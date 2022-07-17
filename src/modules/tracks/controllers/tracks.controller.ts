@@ -16,7 +16,7 @@ import { CreateTrackDto } from '../dto/create-track.dto';
 import { UpdateTrackDto } from '../dto/update-track.dto';
 import { ITrack } from '../interfaces/track.interface';
 
-@Controller('tracks')
+@Controller('track')
 export class TracksController {
   constructor(private readonly tracksService: TracksService) {}
   error = new ErrorHandler();
@@ -54,6 +54,6 @@ export class TracksController {
   async delete(@Param('id', ParseUUIDPipe) id: string): Promise<string | void> {
     const track = await this.tracksService.delete(id);
     if (!track) return this.error.notFound('Track');
-    return track;
+    return this.error.deleted('Track');
   }
 }

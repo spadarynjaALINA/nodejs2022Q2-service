@@ -13,7 +13,7 @@ export class ArtistsService {
     return this.storage.create(createArtistsDto);
   }
 
-  async delete(id: string): Promise<string> {
+  async delete(id: string): Promise<string | void> {
     return this.storage.delete(id);
   }
 
@@ -25,7 +25,10 @@ export class ArtistsService {
     return this.storage.findById(id);
   }
 
-  async update(updateArtistDto: UpdateArtistDto, id: string): Promise<IArtist> {
-    return this.storage.update(updateArtistDto, id);
+  async update(
+    updateArtistDto: UpdateArtistDto,
+    id: string,
+  ): Promise<IArtist | void> {
+    return await this.storage.update(updateArtistDto, id);
   }
 }

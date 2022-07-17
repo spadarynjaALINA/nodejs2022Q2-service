@@ -12,6 +12,7 @@ import {
 import { url } from 'inspector';
 import { ErrorHandler } from 'src/errorsHandler/errorHandler';
 import { URL } from 'url';
+import { FavoritesRepsonse } from '../dto/add-favorites.dto';
 import { FavoriteDto } from '../dto/favorites.dto';
 import { IFavorite } from '../interfaces/favorite.interface';
 import { FavoritesService } from '../services/favorites.service';
@@ -22,26 +23,25 @@ export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
   @Get()
-  async all(): Promise<IFavorite> {
+  async all(): Promise<FavoritesRepsonse> {
     return await this.favoritesService.findAll();
   }
 
-  @Put('/:type/:id')
+  @Post('/:type/:id')
   async add(
     @Param('type') type: string,
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<IFavorite> {
+  ): Promise<void> {
     return await this.favoritesService.add(type, id);
   }
 
   @Delete('/:type/:id')
-  // @HttpCode(204)
   async delete(
     @Param('type') type: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<string | void> {
     const track = await this.favoritesService.delete(type, id);
-    if (track === null) return this.error.notFound('Favorites');
+
     return track;
   }
 }

@@ -9,7 +9,13 @@ import { AlbumsModule } from './modules/albums/albums.module';
 import { FavoritesModule } from './modules/favorites/favorites.module';
 
 @Module({
-  imports: [ArtistsModule, TracksModule, AlbumsModule, FavoritesModule],
+  imports: [
+    ArtistsModule,
+    TracksModule,
+    AlbumsModule,
+    FavoritesModule,
+    UsersModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

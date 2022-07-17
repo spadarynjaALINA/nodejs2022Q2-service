@@ -1,10 +1,11 @@
+import { LoginDto } from '../dto/login.dto';
 import { UpdatePasswordDto } from '../dto/password.dto';
-import { RegisterDto } from '../dto/register.dto';
-import { IUser } from '../interfaces/user.interface';
+import { IUser, IUserResponce } from '../interfaces/user.interface';
 
-export interface UserStore {
-  all: (limit: number) => IUser[];
+export interface UsersStore {
+  all: () => IUser[];
   findById: (id: string) => IUser;
-  create: (params: RegisterDto) => IUser;
-  update: (user: IUser, params: UpdatePasswordDto) => IUser;
+  create: (params: LoginDto) => IUserResponce;
+  update: (id: string, params: UpdatePasswordDto) => IUserResponce | void;
+  delete: (id: string) => string | void;
 }

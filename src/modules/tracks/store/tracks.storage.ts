@@ -5,18 +5,11 @@ import { UpdateTrackDto } from '../dto/update-track.dto';
 import { ITrack } from '../interfaces/track.interface';
 import { TracksStore } from '../interfaces/tracks.interface';
 import { v4 as uuidv4 } from 'uuid';
+import { BD } from 'src/bd';
 @Injectable()
 export class InMemoryTracksStore implements TracksStore {
-  private tracks: TrackDto[] = [
-    {
-      id: '085f7d32-10c5-476e-9803-169dcb663e30',
-      name: 'string',
-      artistId: null,
-      albumId: null,
-      duration: 123,
-    },
-  ];
-
+  bd = new BD();
+  tracks = this.bd.tracks;
   all(): ITrack[] {
     return this.tracks;
   }

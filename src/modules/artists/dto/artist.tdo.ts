@@ -1,10 +1,11 @@
-import { IsBoolean, IsString } from 'class-validator';
+import { IsBoolean, IsString, IsUUID } from 'class-validator';
 
 export class ArtistDto {
-  @IsString()
-  id: string;
-  @IsString()
   name: string;
   @IsBoolean()
+  @IsString()
+  @IsUUID(4)
+  id: string;
+  @IsString()
   grammy: boolean;
 }

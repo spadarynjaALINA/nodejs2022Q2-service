@@ -15,7 +15,7 @@ import { UpdateArtistDto } from '../dto/update-artist.dto';
 import { IArtist } from '../interfaces/artist.interface';
 import { ArtistsService } from '../services/artists.service';
 
-@Controller('artists')
+@Controller('artist')
 export class ArtistsController {
   error = new ErrorHandler();
   constructor(private readonly artistsService: ArtistsService) {}
@@ -51,6 +51,6 @@ export class ArtistsController {
   async delete(@Param('id', ParseUUIDPipe) id: string): Promise<string | void> {
     const track = await this.artistsService.delete(id);
     if (!track) return this.error.notFound('Track');
-    return track;
+    return this.error.deleted('Track');
   }
 }

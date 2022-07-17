@@ -1,4 +1,4 @@
-import { IsInt, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UpdateTrackDto {
   @IsOptional()
@@ -6,6 +6,7 @@ export class UpdateTrackDto {
   name: string;
   @IsString()
   @IsOptional()
+  @IsUUID(4)
   artistId: string; // refers to Artist
   @IsString()
   @IsOptional()

@@ -5,44 +5,83 @@ import { UpdateAlbumDto } from '../dto/update-albums.dto';
 import { IAlbum } from '../interfaces/album.interface';
 import { AlbumsStore } from '../schemas/albums.interface';
 import { v4 as uuidv4 } from 'uuid';
+import { BD } from 'src/bd';
+import { ErrorHandler } from 'src/errorsHandler/errorHandler';
 @Injectable()
 export class InMemoryAlbumsStore implements AlbumsStore {
-  private Albums: AlbumDto[] = [
-    {
-      name: 'name',
-      id: 'cc2b06d7-4906-4a19-9935-06e9de2f9e23',
-      year: 2002,
-      artistId: null,
-    },
-  ];
-
+  bd = new BD();
+  albums = this.bd.albums;
+  error = new ErrorHandler();
   all(): IAlbum[] {
-    return this.Albums;
+    return this.albums;
   }
-  findById(id: string): AlbumDto | undefined {
-    const Album = this.Albums.find((Album) => Album.id === id);
-    return Album;
+  findById(id: string): AlbumDto | undefined | void {
+    const Album = this.albums.find((Album) => Album.id === id);
+    return Album ?? this.error.notFound('album');
   }
   create(AlbumDto: CreateAlbumDto): IAlbum {
     const newAlbum = {
       ...AlbumDto,
       id: uuidv4(),
     };
-    this.Albums.push(newAlbum);
+    this.albums.push(newAlbum);
     return newAlbum;
   }
-  update(params: UpdateAlbumDto, id: string): AlbumDto {
-    this.Albums = this.Albums.map((Album) => {
-      if (Album.id === id) {
-        return Object.assign(Album, params);
-      }
-      return Album;
-    });
-    return this.findById(params.id);
+  update(params: UpdateAlbumDto, id: string): AlbumDto | void {
+    if (!this.findById(id)) {
+      return this.error.notFound('album');
+    } else {
+      this.albums = this.albums.map((Album) => {
+        if (Album.id === id) {
+          return Object.assign(Album, params);
+        }
+        return Album;
+      });
+      return this.findById(id);
+    }
   }
-  delete(id: string): string {
-    const Album = this.findById(id);
-    this.Albums = this.Albums.filter((Album) => Album.id !== id);
-    return !!Album ? `Album with id ${id} has been deleted` : null;
+  async delete(id: string): Promise<string | void> {
+    const album = this.albums.find((Album) => Album.id === id);
+    console.log(album, '- album');
+    if (!!album) {
+      this.bd.tracks.forEach((track) => {
+        if (track.albumId === id) track.albumId = null;
+      });
+      this.bd.favorites.albums.forEach((item) => {
+        if (item === id) {
+          console.log('favorites');
+          this.bd.favorites.albums.splice(
+            this.bd.favorites.albums.indexOf(id),
+            1,
+          );
+        }
+      });
+      this.albums = this.albums.filter((Album) => Album.id !== id);
+
+      return await this.error.deleted('albums');
+    } else {
+      return this.error.notFound('albums');
+    }
   }
 }
+//  delete(id: string): string | void {
+//     const artist = this.findById(id);
+//     this.artists = this.artists.filter((artist) => artist.id !== id);
+//     this.bd.albums.forEach((album) => {
+//       if (album.artistId === id) album.artistId = null;
+//     });
+//     this.bd.tracks.forEach((track) => {
+//       console.log(track.artistId, id);
+//       if (track.artistId === id) track.artistId = null;
+//     });
+//     this.bd.favorites.artists.forEach((item) => {
+//       if (item === id) {
+//         console.log('infav', this.bd.favorites.artists.indexOf(id));
+//         this.bd.favorites.artists.splice(
+//           this.bd.favorites.artists.indexOf(id),
+//           1,
+//         );
+//       }
+//     });
+//     return !!artist ? this.error.deleted('artist') : null;
+//   }

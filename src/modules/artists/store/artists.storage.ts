@@ -5,16 +5,13 @@ import { UpdateArtistDto } from '../dto/update-artist.dto';
 import { IArtist } from '../interfaces/artist.interface';
 import { Injectable } from '@nestjs/common';
 import { ArtistDto } from '../dto/artist.tdo';
+import { BD } from 'src/bd';
+import { ErrorHandler } from 'src/errorsHandler/errorHandler';
 @Injectable()
 export class InMemoryArtistsStore implements ArtistsStore {
-  private artists: ArtistDto[] = [
-    {
-      name: 'name',
-      id: '085f7d32-10c5-476e-9803-169dcb663e30',
-      grammy: true,
-    },
-  ];
-
+  bd = new BD();
+  artists = this.bd.artists;
+  error = new ErrorHandler();
   all(): IArtist[] {
     return this.artists;
   }
@@ -30,18 +27,38 @@ export class InMemoryArtistsStore implements ArtistsStore {
     this.artists.push(newArtist);
     return newArtist;
   }
-  update(params: UpdateArtistDto, id: string): ArtistDto {
-    this.artists = this.artists.map((artist) => {
-      if (artist.id === id) {
-        return Object.assign(artist, params);
-      }
-      return artist;
-    });
-    return this.findById(params.id);
+  async update(params: UpdateArtistDto, id: string): Promise<void | ArtistDto> {
+    if (!this.findById(id)) {
+      return this.error.notFound('artist');
+    } else {
+      this.artists = this.artists.map((artist) => {
+        if (artist.id === id) {
+          return Object.assign(artist, params);
+        }
+        return artist;
+      });
+      console.log(this.findById(id));
+      return this.findById(id);
+    }
   }
-  delete(id: string): string {
+  delete(id: string): string | void {
     const artist = this.findById(id);
     this.artists = this.artists.filter((artist) => artist.id !== id);
-    return !!artist ? `Artist with id ${id} has been deleted` : null;
+    this.bd.albums.forEach((album) => {
+      if (album.artistId === id) album.artistId = null;
+    });
+    this.bd.tracks.forEach((track) => {
+      console.log(track.artistId, id);
+      if (track.artistId === id) track.artistId = null;
+    });
+    this.bd.favorites.artists.forEach((item) => {
+      if (item === id) {
+        this.bd.favorites.artists.splice(
+          this.bd.favorites.artists.indexOf(id),
+          1,
+        );
+      }
+    });
+    return !!artist ? this.error.deleted('artist') : null;
   }
 }
