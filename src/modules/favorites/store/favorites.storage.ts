@@ -33,30 +33,119 @@ export class InMemoryFavoritesStore implements FavoritesStore {
   }
 
   add(type: string, id: string): void {
-    const typeEdit = `${type}s`;
-    if (!this.bd[typeEdit].find((item) => item.id === id)) {
+    switch (type) {
+      case 'artist':
+        console.log(
+          this.bd.artists.find((item) => item.id === id),
+          'switch',
+          type,
+          id,
+          '-id',
+        );
+        if (!this.bd.artists.find((item) => item.id === id)) {
+          return this.error.alreadyExist(type);
+        } else {
+          console.log('else');
+          if (this.bd.favorites.artists.find((item: string) => item === id)) {
+            console.log('already in favorites');
+            this.error.alreadyExist(type);
+          } else {
+            this.favorites.artists.push(id);
+            console.log('added');
 
-    } else if (this.favorites[typeEdit].find((item: string) => item === id)) {
-      console.log('already in favorites');
-      return this.error.alreadyExist(type);
-    } else {
-      this.favorites[typeEdit].push(id);
-      console.log('added');
-      HttpStatus.CREATED;
-      return this.error.alreadyExist(type);
+            this.error.notExist(type);
+          }
+        }
+        break;
+      case 'album':
+        if (!this.bd.albums.find((item) => item.id === id)) {
+          return this.error.alreadyExist(type);
+        } else {
+          console.log('else');
+          if (this.bd.favorites.albums.find((item: string) => item === id)) {
+            console.log('already in favorites');
+            this.error.alreadyExist(type);
+          } else {
+            this.favorites.albums.push(id);
+            console.log('added');
+
+            this.error.notExist(type);
+          }
+        }
+        break;
+      case 'track':
+        if (!this.bd.tracks.find((item) => item.id === id)) {
+          return this.error.alreadyExist(type);
+        } else {
+          console.log('else');
+          if (this.bd.favorites.tracks.find((item: string) => item === id)) {
+            console.log('already in favorites');
+            this.error.alreadyExist(type);
+          } else {
+            this.favorites.tracks.push(id);
+            console.log('added');
+            this.error.notExist(type);
+          }
+        }
+        break;
     }
   }
 
   async delete(type: string, id: string): Promise<string | void> {
-    const typeEdit = `${type}s`;
-    if (this.favorites[typeEdit].find((item: string) => item === id)) {
-      this.favorites[typeEdit] = this.favorites[typeEdit].filter(
-        (favorite: string) => favorite !== id,
-      );
+    switch (type) {
+      case 'artist':
+        if (!this.bd.artists.find((item) => item.id === id)) {
+          return this.error.alreadyExist(type);
+        } else {
+          console.log('else');
+          if (this.bd.favorites.artists.find((item: string) => item === id)) {
+            console.log('already in favorites');
+            this.error.alreadyExist(type);
+          } else {
+            this.favorites.artists = this.favorites.artists.filter(
+              (item) => item !== id,
+            );
+            console.log('added');
 
-      return this.error.alreadyExist(type);
-    } else {
-      return this.error.deleted(type);
+            this.error.notExist(type);
+          }
+        }
+        break;
+      case 'album':
+        if (!this.bd.albums.find((item) => item.id === id)) {
+          return this.error.alreadyExist(type);
+        } else {
+          console.log('else');
+          if (this.bd.favorites.albums.find((item: string) => item === id)) {
+            console.log('already in favorites');
+            this.error.alreadyExist(type);
+          } else {
+            this.favorites.albums = this.favorites.albums.filter(
+              (item) => item !== id,
+            );
+            console.log('added');
+
+            this.error.deleted(type);
+          }
+        }
+        break;
+      case 'track':
+        if (!this.bd.tracks.find((item) => item.id === id)) {
+          return this.error.deleted(type);
+        } else {
+          console.log('else');
+          if (this.bd.favorites.tracks.find((item: string) => item === id)) {
+            console.log('already in favorites');
+            this.error.alreadyExist(type);
+          } else {
+            this.favorites.tracks = this.favorites.tracks.filter(
+              (item) => item !== id,
+            );
+            console.log('added');
+            this.error.deleted(type);
+          }
+        }
+        break;
     }
   }
 
