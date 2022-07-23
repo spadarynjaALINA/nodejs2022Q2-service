@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model Artist {
+  id String @id @default(uuid())
+  name String @db.VarChar(200)
+  grammy Boolean
+  albums Album[]
+  tracks Track[]
+  favs Favorite? @relation(fields: [favoriteId], references:[id])
+  favoriteId String?
+}
+
+model Album {
+  id String @id @default(uuid())
+  name String @db.VarChar(200)
+  year Int
+  artist Artist? @relation(fields:[artistId], references:[id])
+  artistId String?
+  tracks Track[]
+  favs Favorite? @relation(fields:[favoriteId], references:[id])
+  favoriteId String?
+}
+model Track {
+id String @id @default(uuid())
+name String @db.VarChar(200)
+ artist Artist? @relation(fields:[artistId], references:[id])
+  artistId String?
+   albums Album? @relation(fields:[albumId], references:[id])
+  albumId String?
+  favs Favorite? @relation(fields:[favoriteId], references:[id])
+  favoriteId String?
+}
+model Favorite {
+id String @id @default(uuid())
+artists Artist[]
+albums Album[]
+tracks Track[]
+}
+model User {
+  id String @id @default(uuid())
+  login String @db.VarChar(200)
+  password String @db.VarChar(200)
+  version Int @default(1)
+  createdAt DateTime @default(now()) @db.Timestamp(3)
+  updatedAt DateTime @default(now()) @db.Timestamp(3)
+}
