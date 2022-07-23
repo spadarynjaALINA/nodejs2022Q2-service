@@ -4,18 +4,14 @@ services:
     build: .
     restart: always
     depends_on:
-      - postgress
+      - postgres
     ports:
-      - "4000:4000"
+      - ${PORT}:${PORT}
   postgres:
     image: postgres
     environment:
       POSTGRES_DB: root
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
-      PGDATA: "/var/lib/postgresql/data/pgdata"
-    volumes:
-      - ../2. Init Database:/docker-entrypoint-initdb.d
-      - .:/var/lib/postgresql/data
     ports:
       - "5432:5432"

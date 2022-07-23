@@ -1,13 +1,7 @@
-# FROM node:lts-alpine as build
-# WORKDIR /usr/app/src
-# COPY ["package*.json", "./" ]
-# RUN npm install
-# COPY . .
-
-FROM node:8 as build
-WORKDIR /app
-COPY ["package*.json", "./" ]
+FROM node:lts-alpine as build
+WORKDIR /usr/app/src
+COPY package*.json .
 RUN npm install
-FROM node:8-alpine
+COPY . .
 EXPOSE ${PORT}
-CMD ["npm","run", "start:dev"]
+CMD ["docker system prune", "npm","run", "start:dev"]

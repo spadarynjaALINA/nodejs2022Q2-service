@@ -1,5 +1,5 @@
 DockerFile
-**/node_modules
+node_modules
 npm-debug.log
 dist
 .dockerignore
