@@ -10,8 +10,8 @@ services:
   postgres:
     image: postgres
     environment:
-      POSTGRES_DB: root
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
+      POSTGRES_DB: nest
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
     ports:
-      - "5432:5432"
+      - 5432:5432
