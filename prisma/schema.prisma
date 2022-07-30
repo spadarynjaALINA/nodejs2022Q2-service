@@ -3,47 +3,54 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["orderByNulls"]
+  binaryTargets = ["native", "linux-musl"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://postgres:postgres@localhost:5432/postgres?schema=public"
 }
 model Artist {
-  id String @id @default(uuid())
-  name String @db.VarChar(200)
-  grammy Boolean
-  albums Album[]
-  tracks Track[]
-  favs Favorite? @relation(fields: [favoriteId], references:[id])
+  id         String     @id @default(uuid())
+  name       String     @db.VarChar(255)
+  grammy     Boolean
+  Album      Album[]
+  Track      Track[]
+  Favorites  Favorites? @relation(fields: [favoriteId], references: [id])
   favoriteId String?
 }
-
 model Album {
   id String @id @default(uuid())
   name String @db.VarChar(200)
   year Int
-  artist Artist? @relation(fields:[artistId], references:[id])
-  artistId String?
-  tracks Track[]
-  favs Favorite? @relation(fields:[favoriteId], references:[id])
+ artist     Artist?    @relation(fields: [artistId], references: [id], onDelete: SetNull)
+  artistId   String?
+  Track      Track[]
+  Favorites  Favorites? @relation(fields: [favoriteId], references: [id])
   favoriteId String?
+
+  @@map("album")
 }
 model Track {
-id String @id @default(uuid())
-name String @db.VarChar(200)
- artist Artist? @relation(fields:[artistId], references:[id])
+  id String @id @default(uuid())
+  name String @db.VarChar(200)
+  artist     Artist?    @relation(fields: [artistId], references: [id], onDelete: SetNull)
   artistId String?
-   albums Album? @relation(fields:[albumId], references:[id])
+  album      Album?     @relation(fields: [albumId], references: [id], onDelete: SetNull)
   albumId String?
-  favs Favorite? @relation(fields:[favoriteId], references:[id])
+  duration Int?
+  Favorites  Favorites? @relation(fields: [favoriteId], references: [id])
   favoriteId String?
+  @@map("track")
 }
-model Favorite {
-id String @id @default(uuid())
+model Favorites {
+ id String @id @default(uuid())
 artists Artist[]
 albums Album[]
 tracks Track[]
+
+@@map("favs")
 }
 model User {
   id String @id @default(uuid())
@@ -52,4 +59,5 @@ model User {
   version Int @default(1)
   createdAt DateTime @default(now()) @db.Timestamp(3)
   updatedAt DateTime @default(now()) @db.Timestamp(3)
+  @@map("user")
 }

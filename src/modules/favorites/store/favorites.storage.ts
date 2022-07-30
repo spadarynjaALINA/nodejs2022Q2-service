@@ -3,7 +3,7 @@ import {
   Injectable,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { StatusCodes } from 'http-status-codes';
+
 import { BD } from 'src/bd';
 import { ErrorHandler } from 'src/errorsHandler/errorHandler';
 import { FavoritesRepsonse } from '../dto/add-favorites.dto';
