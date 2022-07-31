@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { LoginDto } from '../dto/login.dto';
 import { UpdatePasswordDto } from '../dto/password.dto';
-import { IUser, IUserResponce } from '../interfaces/user.interface';
+import { IUserResponce } from '../interfaces/user.interface';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from '@prisma/client';
 

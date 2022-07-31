@@ -5,4 +5,4 @@ RUN npm install
 COPY . .
 RUN npx prisma generate
 EXPOSE ${PORT}
-CMD [ "npm","run", "start:dev"]
+CMD [ "npm","run", "start:dev:docker"]
