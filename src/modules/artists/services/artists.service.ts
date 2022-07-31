@@ -1,22 +1,14 @@
-import { HttpException, Inject, Injectable } from '@nestjs/common';
+import {  Injectable } from '@nestjs/common';
 import { UpdateArtistDto } from '../dto/update-artist.dto';
-import { ArtistsStore } from '../schemas/artists.interface';
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { IArtist } from '../interfaces/artist.interface';
 import { ArtistDto } from '../dto/artist.tdo';
-
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { v4 as uuidv4 } from 'uuid';
-import { NOTFOUND } from 'dns';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { Artist } from '@prisma/client';
-
 @Injectable()
 export class ArtistsService {
-  constructor(
-    @Inject('ArtistsStore') private storage: ArtistsStore,
-    private prisma: PrismaService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async create(createArtistsDto: CreateArtistDto): Promise<IArtist> {
     const newArtist = {
@@ -53,7 +45,12 @@ export class ArtistsService {
   async update(
     updateArtistDto: UpdateArtistDto,
     id: string,
-  ): Promise<IArtist | void> {
-    return await this.storage.update(updateArtistDto, id);
+  ): Promise<Artist | void> {
+    if (await this.prisma.artist.findUnique({ where: { id } })) {
+      await this.prisma.artist.updateMany({
+        where: { id },
+        data: updateArtistDto,
+      });
+    }
   }
 }

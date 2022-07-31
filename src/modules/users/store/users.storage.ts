@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { UpdatePasswordDto } from '../dto/password.dto';
 import { LoginDto } from '../dto/login.dto';
 import { BD } from 'src/bd';
-import { ErrorHandler } from 'src/errorsHandler/errorHandler';
+import { ErrorHandler } from 'src/helpers/errorHandler';
 @Injectable()
 export class InMemoryUsersStore implements UsersStore {
   bd = new BD();

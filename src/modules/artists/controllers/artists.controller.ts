@@ -11,7 +11,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Artist } from '@prisma/client';
-import { ErrorHandler } from 'src/errorsHandler/errorHandler';
+import { ErrorHandler } from 'src/helpers/errorHandler';
 import { ArtistDto } from '../dto/artist.tdo';
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { UpdateArtistDto } from '../dto/update-artist.dto';
@@ -47,11 +47,14 @@ export class ArtistsController {
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
-    return this.artistsService.update(updateArtistDto, id);
+    return (
+      (await this.artistsService.update(updateArtistDto, id)) ||
+      this.error.notFound('Artist')
+    );
   }
 
   @Delete(':id')

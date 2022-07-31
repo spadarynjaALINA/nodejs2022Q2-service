@@ -7,8 +7,11 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
-import { ErrorHandler } from 'src/errorsHandler/errorHandler';
+import { Album } from '@prisma/client';
+import { ErrorHandler } from 'src/helpers/errorHandler';
 import { AlbumDto } from '../dto/albums.dto';
 import { CreateAlbumDto } from '../dto/create-albums.dto';
 import { UpdateAlbumDto } from '../dto/update-albums.dto';
@@ -21,35 +24,43 @@ export class AlbumsController {
   constructor(private readonly albumsService: AlbumsService) {}
 
   @Get()
+  @HttpCode(HttpStatus.OK)
   async all(): Promise<IAlbum[]> {
     return await this.albumsService.findAll();
   }
 
   @Get(':id')
+  @HttpCode(HttpStatus.OK)
   async getById(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void | AlbumDto> {
-    const Album = await this.albumsService.findOne(id);
-    if (!Album) return this.error.notFound('Album');
-    return Album;
+    return (
+      (await this.albumsService.findOne(id)) || this.error.notFound('Album')
+    );
   }
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() createAlbumDto: CreateAlbumDto): Promise<IAlbum> {
     return this.albumsService.create(createAlbumDto);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
   ) {
-    return this.albumsService.update(updateAlbumDto, id);
+    return (
+      (await this.albumsService.update(updateAlbumDto, id)) ||
+      this.error.notFound('Album')
+    );
   }
 
   @Delete(':id')
-  async delete(@Param('id', ParseUUIDPipe) id: string): Promise<string | void> {
-    console.log(await this.albumsService.delete(id), 'controller');
-    return await this.albumsService.delete(id);
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async delete(@Param('id', ParseUUIDPipe) id: string): Promise<Album | void> {
+    return (
+      (await this.albumsService.delete(id)) || this.error.notFound('Album')
+    );
   }
 }

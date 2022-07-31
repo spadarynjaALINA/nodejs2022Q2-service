@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { CreateTrackDto } from '../dto/create-track.dto';
 import { TrackDto } from '../dto/track.dto';
 import { UpdateTrackDto } from '../dto/update-track.dto';
@@ -7,25 +8,37 @@ import { TracksStore } from '../interfaces/tracks.interface';
 
 @Injectable()
 export class TracksService {
-  constructor(@Inject('TracksStore') private storage: TracksStore) {}
+  constructor(private prisma: PrismaService) {}
 
   async create(createTracksDto: CreateTrackDto): Promise<ITrack> {
-    return this.storage.create(createTracksDto);
+    return this.prisma.track.create({ data: createTracksDto });
   }
 
-  async delete(id: string): Promise<string> {
-    return this.storage.delete(id);
+  async delete(id: string): Promise<ITrack> {
+    const track = await this.prisma.track.findUnique({ where: { id } });
+    if (track) {
+      await this.prisma.track.delete({ where: { id } });
+      return track;
+    }
   }
 
   async findAll(): Promise<ITrack[]> {
-    return this.storage.all();
+    return this.prisma.track.findMany();
   }
 
   async findOne(id: string): Promise<TrackDto> {
-    return this.storage.findById(id);
+    return this.prisma.track.findUnique({ where: { id } });
   }
 
-  async update(updateTrackDto: UpdateTrackDto, id: string): Promise<ITrack> {
-    return this.storage.update(updateTrackDto, id);
+  async update(
+    updateTrackDto: UpdateTrackDto,
+    id: string,
+  ): Promise<ITrack | void> {
+    if (await this.prisma.track.findUnique({ where: { id } })) {
+      await this.prisma.track.updateMany({
+        where: { id },
+        data: updateTrackDto,
+      });
+    }
   }
 }
