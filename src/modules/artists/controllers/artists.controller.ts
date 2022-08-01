@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { Artist } from '@prisma/client';
 import { ErrorHandler } from 'src/helpers/errorHandler';
-import { ArtistDto } from '../dto/artist.tdo';
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { UpdateArtistDto } from '../dto/update-artist.dto';
 import { IArtist } from '../interfaces/artist.interface';
@@ -33,7 +32,7 @@ export class ArtistsController {
   @HttpCode(HttpStatus.OK)
   async getById(
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<void | ArtistDto> {
+  ): Promise<void | IArtist> {
     return (
       (await this.artistsService.findOne(id)) || this.error.notFound('Artist')
     );
@@ -47,12 +46,12 @@ export class ArtistsController {
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
-  async update(
+  update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
     return (
-      (await this.artistsService.update(updateArtistDto, id)) ||
+      this.artistsService.update(updateArtistDto, id) ??
       this.error.notFound('Artist')
     );
   }

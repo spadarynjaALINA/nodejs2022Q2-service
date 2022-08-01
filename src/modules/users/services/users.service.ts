@@ -2,20 +2,30 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { LoginDto } from '../dto/login.dto';
 import { UpdatePasswordDto } from '../dto/password.dto';
-import { IUserResponce } from '../interfaces/user.interface';
+import { IUserResponse } from '../interfaces/user.interface';
 import { v4 as uuidv4 } from 'uuid';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
+import { ErrorHandler } from 'src/helpers/errorHandler';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
-
-  async create(loginDto: LoginDto): Promise<User> {
-    const newUser = {
-      ...loginDto,
+  error = new ErrorHandler();
+  async create(loginDto: LoginDto): Promise<IUserResponse> {
+    const newUpdate = Date.now();
+    const userResponse = {
+      login: loginDto.login,
       id: uuidv4(),
+      version: 1,
+      createdAt: newUpdate,
+      updatedAt: newUpdate,
     };
-    return await this.prisma.user.create({ data: newUser });
+    const newUser = {
+      ...userResponse,
+      password: loginDto.password,
+    };
+    await this.prisma.user.create({ data: newUser });
+    return userResponse;
   }
 
   async delete(id: string): Promise<User | void> {
@@ -37,12 +47,29 @@ export class UsersService {
   async update(
     id: string,
     updatePasswordDto: UpdatePasswordDto,
-  ): Promise<IUserResponce | void> {
-    if (await this.prisma.user.findUnique({ where: { id } })) {
-      await this.prisma.user.updateMany({
-        where: { id },
-        data: updatePasswordDto,
-      });
+  ): Promise<IUserResponse | void | Prisma.BatchPayload> {
+    const updatedUser = await this.prisma.user.findUnique({ where: { id } });
+    if (updatedUser) {
+      if (updatedUser.password === updatePasswordDto.oldPassword) {
+        const newUpdate = Date.now();
+        await this.prisma.user.updateMany({
+          where: { id },
+          data: {
+            password: updatePasswordDto.newPassword,
+            version: updatedUser.version + 1,
+            updatedAt: newUpdate,
+          },
+        });
+        return {
+          id: updatedUser.id,
+          login: updatedUser.login,
+          version: updatedUser.version + 1,
+          createdAt: updatedUser.createdAt,
+          updatedAt: newUpdate,
+        };
+      } else {
+        return this.error.notMatch();
+      }
     }
   }
 }

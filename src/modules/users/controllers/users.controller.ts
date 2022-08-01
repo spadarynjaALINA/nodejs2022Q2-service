@@ -15,7 +15,7 @@ import { ErrorHandler } from 'src/helpers/errorHandler';
 import { LoginDto } from '../dto/login.dto';
 import { UpdatePasswordDto } from '../dto/password.dto';
 import { RegisterDto } from '../dto/register.dto';
-import { IUser, IUserResponce } from '../interfaces/user.interface';
+import { IUser, IUserResponse } from '../interfaces/user.interface';
 import { UsersService } from '../services/users.service';
 
 @Controller('user')
@@ -39,7 +39,7 @@ export class UsersController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() loginDto: LoginDto): Promise<User> {
+  create(@Body() loginDto: LoginDto): Promise<IUserResponse> {
     return this.usersService.create(loginDto);
   }
 
@@ -51,13 +51,13 @@ export class UsersController {
   ) {
     return (
       (await this.usersService.update(id, updatePasswordDto)) ||
-      this.error.notFound('Album')
+      this.error.notFound('User')
     );
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id', ParseUUIDPipe) id: string): Promise<User | void> {
-    return (await this.usersService.delete(id)) || this.error.notFound('Album');
+    return (await this.usersService.delete(id)) || this.error.notFound('User');
   }
 }

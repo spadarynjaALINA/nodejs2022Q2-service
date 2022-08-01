@@ -1,35 +1,75 @@
 import { Injectable } from '@nestjs/common';
-import { Album, Artist, Favorites, Track } from '@prisma/client';
-import { addFavs } from 'src/helpers/addFav';
-import { updateFavs } from 'src/helpers/updateFavs';
+import { Favorites } from '@prisma/client';
+
 import { PrismaService } from 'src/modules/prisma/prisma.service';
-import { FavoritesSelect } from '../interfaces/favorite.interface';
 
 @Injectable()
 export class FavoritesService {
   constructor(private prisma: PrismaService) {}
 
-  async add(type: string, id: string): Promise<Artist | Album | Track> {
+  async add(type: string, id: string) {
     switch (type) {
       case 'artist':
-        return await addFavs(this.prisma.artist, id);
+        if (await this.prisma.artist.findUnique({ where: { id } })) {
+          const favorites =
+            (await this.prisma.favorites.findFirst()) ||
+            (await this.prisma.favorites.create({ data: {} }));
+          const favoritesId = favorites.id;
+          return await this.prisma.artist.update({
+            where: { id },
+            data: { favoriteId: favoritesId },
+          });
+        }
       case 'album':
-        return await addFavs(this.prisma.album, id);
+        if (await this.prisma.album.findUnique({ where: { id } })) {
+          const favorites =
+            (await this.prisma.favorites.findFirst()) ||
+            (await this.prisma.favorites.create({ data: {} }));
+          const favoritesId = favorites.id;
+          return this.prisma.album.update({
+            where: { id },
+            data: { favoriteId: favoritesId },
+          });
+        }
       case 'track':
-        await addFavs(this.prisma.track, id);
+        if (await this.prisma.track.findUnique({ where: { id } })) {
+          const favorites =
+            (await this.prisma.favorites.findFirst()) ||
+            (await this.prisma.favorites.create({ data: {} }));
+          const favoritesId = favorites.id;
+          return await this.prisma.track.update({
+            where: { id },
+            data: { favoriteId: favoritesId },
+          });
+        }
       default:
         break;
     }
   }
 
   async delete(type: string, id: string): Promise<Favorites | void> {
-    const types =
-      type === 'artist'
-        ? this.prisma.artist
-        : 'album'
-        ? this.prisma.album
-        : this.prisma.track;
-    return await updateFavs(types, id);
+    switch (type) {
+      case 'artist':
+        return await this.prisma.artist.update({
+          where: { id },
+          data: { favoriteId: { set: null } },
+        });
+
+      case 'album':
+        return await this.prisma.album.update({
+          where: { id },
+          data: { favoriteId: { set: null } },
+        });
+
+      case 'track':
+        return await this.prisma.track.update({
+          where: { id },
+          data: { favoriteId: { set: null } },
+        });
+
+      default:
+        break;
+    }
   }
 
   async findAll() {

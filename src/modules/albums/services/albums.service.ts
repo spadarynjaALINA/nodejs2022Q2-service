@@ -18,14 +18,14 @@ export class AlbumsService {
   }
 
   async delete(id: string): Promise<Album | void> {
-    const artist = await this.prisma.album.findUnique({ where: { id } });
-    if (artist) {
+    const album = await this.prisma.album.findUnique({ where: { id } });
+    if (album) {
       await this.prisma.track.updateMany({
         where: { artistId: { equals: id } },
         data: { artistId: null },
       });
       await this.prisma.album.delete({ where: { id } });
-      return artist;
+      return album;
     }
   }
 
@@ -42,7 +42,7 @@ export class AlbumsService {
     id: string,
   ): Promise<IAlbum | void> {
     if (await this.prisma.album.findUnique({ where: { id } })) {
-      await this.prisma.album.updateMany({
+      return await this.prisma.album.update({
         where: { id },
         data: updateAlbumDto,
       });

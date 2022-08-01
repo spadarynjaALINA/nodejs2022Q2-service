@@ -35,7 +35,7 @@ export class TracksService {
     id: string,
   ): Promise<ITrack | void> {
     if (await this.prisma.track.findUnique({ where: { id } })) {
-      await this.prisma.track.updateMany({
+      return await this.prisma.track.update({
         where: { id },
         data: updateTrackDto,
       });

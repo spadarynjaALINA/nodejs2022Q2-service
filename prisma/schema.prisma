@@ -3,13 +3,12 @@
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["orderByNulls"]
-  binaryTargets = ["native", "linux-musl"]
+  binaryTargets = ["native","windows", "linux-musl"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://postgres:postgres@localhost:5434/postgres?schema=public"
+  url      = env("DATABASE_URL")
 }
 model Artist {
   id         String     @id @default(uuid())
@@ -24,7 +23,7 @@ model Album {
   id String @id @default(uuid())
   name String @db.VarChar(200)
   year Int
- artist     Artist?    @relation(fields: [artistId], references: [id], onDelete: SetNull)
+  artist     Artist?    @relation(fields: [artistId], references: [id], onDelete: SetNull)
   artistId   String?
   Track      Track[]
   Favorites  Favorites? @relation(fields: [favoriteId], references: [id])
@@ -54,10 +53,10 @@ tracks Track[]
 }
 model User {
   id String @id @default(uuid())
-  login String @db.VarChar(200)
-  password String @db.VarChar(200)
+  login String @db.VarChar(255)
+  password String @db.VarChar(255)
   version Int @default(1)
-  createdAt DateTime @default(now()) @db.Timestamp(3)
-  updatedAt DateTime @default(now()) @db.Timestamp(3)
+  createdAt Int
+  updatedAt Int
   @@map("user")
 }

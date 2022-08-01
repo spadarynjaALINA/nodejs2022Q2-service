@@ -10,7 +10,7 @@
     "db:dev:rm": "docker compose rm  -s -f -v",
     "db:dev:up": "docker compose up -d",
     "db:dev:restart": "npm run db:dev:rm &&npm run  db:dev:up && sleep 1 && npm run prisma:dev:deploy",
-    "start:dev:docker": "nest start --watch && npx prisma migrate deploy",
+    "start:dev:docker": "npx prisma migrate deploy && nest start --watch",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
