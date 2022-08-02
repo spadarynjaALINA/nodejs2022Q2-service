@@ -57,7 +57,6 @@ export class InMemoryUsersStore implements UsersStore {
           // Object.assign(User, params);
 
           for (const key in User) {
-            console.log(key, this.userResponce[key]);
             if (key !== 'password') {
               this.userResponce[key] = User[key];
             }

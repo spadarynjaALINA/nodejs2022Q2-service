@@ -2,9 +2,9 @@ import { AlbumDto } from 'src/modules/albums/dto/albums.dto';
 import { ArtistDto } from 'src/modules/artists/dto/artist.tdo';
 import { TrackDto } from 'src/modules/tracks/dto/track.dto';
 import { IUser } from 'src/modules/users/interfaces/user.interface';
-import { FavoritesRepsonse } from '../dto/add-favorites.dto';
+import { FavoritesResponse } from '../dto/add-favorites.dto';
 export interface FavoritesStore {
-  all: () => FavoritesRepsonse;
+  all: () => { artists: ArtistDto[]; albums: AlbumDto[]; tracks: TrackDto[] };
 
   add: (id: string, type: string) => void;
 
