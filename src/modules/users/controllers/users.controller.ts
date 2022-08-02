@@ -14,8 +14,8 @@ import { User } from '@prisma/client';
 import { ErrorHandler } from 'src/helpers/errorHandler';
 import { LoginDto } from '../dto/login.dto';
 import { UpdatePasswordDto } from '../dto/password.dto';
-import { RegisterDto } from '../dto/register.dto';
-import { IUser, IUserResponse } from '../interfaces/user.interface';
+
+import { IUserResponse } from '../interfaces/user.interface';
 import { UsersService } from '../services/users.service';
 
 @Controller('user')

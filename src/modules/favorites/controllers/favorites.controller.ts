@@ -8,11 +8,10 @@ import {
   Post,
   HttpStatus,
 } from '@nestjs/common';
-import { Artist, Album, Track, Prisma } from '@prisma/client';
 
 import { ErrorHandler } from 'src/helpers/errorHandler';
 
-import { FavoritesRepsonse } from '../dto/add-favorites.dto';
+import { FavoritesResponse } from '../dto/add-favorites.dto';
 
 import { FavoritesService } from '../services/favorites.service';
 
@@ -23,7 +22,7 @@ export class FavoritesController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async all(): Promise<FavoritesRepsonse> {
+  async all(): Promise<FavoritesResponse> {
     return await this.favoritesService.findAll();
   }
 
@@ -44,7 +43,6 @@ export class FavoritesController {
     @Param('type') type: string,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
-    console.log(!!(await this.favoritesService.delete(type, id)));
     return (
       (await this.favoritesService.delete(type, id)) ??
       this.error.notFound(type)
