@@ -13,12 +13,6 @@ git clone {repository URL}
 npm install
 ```
 
-## Docker build
-
-```
-docker build .
-```
-
 ## Docker compose
 
 ```
