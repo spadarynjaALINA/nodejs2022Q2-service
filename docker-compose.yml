@@ -3,7 +3,7 @@ services:
   app:
     container_name: app
     build: .
-    restart: unless-stopped
+    restart: always
 
     env_file:
       - .env
@@ -25,9 +25,9 @@ services:
   postgres:
     container_name: postgres
     build: ./prisma
-    restart: unless-stopped
+    restart: always
     ports:
-      - 5432:5432
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
