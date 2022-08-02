@@ -19,3 +19,8 @@ npm install
 docker compose up
 ```
 
+## Scan
+
+```
+npm run scan
+```
