@@ -13,28 +13,14 @@ git clone {repository URL}
 npm install
 ```
 
-## Running application
+## Docker compose
 
 ```
-npm run start:dev
+docker compose up
 ```
 
-
-## Testing
-
-
-To run all tests without authorization
+## Scan
 
 ```
-npm run test
+npm run scan
 ```
-
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
-```
-
-
-
-

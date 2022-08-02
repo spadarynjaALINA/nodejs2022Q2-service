@@ -42,7 +42,6 @@ export class InMemoryAlbumsStore implements AlbumsStore {
   }
   async delete(id: string): Promise<string | void> {
     const album = this.albums.find((Album) => Album.id === id);
-    console.log(album, '- album');
     if (!!album) {
       this.bd.tracks.forEach((track) => {
         if (track.albumId === id) track.albumId = null;

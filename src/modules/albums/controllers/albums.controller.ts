@@ -50,7 +50,6 @@ export class AlbumsController {
 
   @Delete(':id')
   async delete(@Param('id', ParseUUIDPipe) id: string): Promise<string | void> {
-    console.log(await this.albumsService.delete(id), 'controller');
     return await this.albumsService.delete(id);
   }
 }
