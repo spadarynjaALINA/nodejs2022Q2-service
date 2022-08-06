@@ -1,10 +1,13 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { CONSOLE_COLORS } from './../../constants';
 import { MyLogger } from 'src/modules/logger/logger.service';
 
 export class ErrorHandler {
-  myLogger = new MyLogger();
-  notFound(type: string) {
-    this.myLogger.error(`${type} not found`);
+  logger = new MyLogger();
+  notFound(type: string, method?: string) {
+    this.logger.error(
+      `${CONSOLE_COLORS.BGmagenta} ERROR:${CONSOLE_COLORS.reset}${CONSOLE_COLORS.magenta} METHOD:${method} STATUS_CODE:404 MSG:${type} not found`,
+    );
     throw new HttpException(
       {
         status: HttpStatus.NOT_FOUND,
@@ -62,6 +65,15 @@ export class ErrorHandler {
         error: `Password id wrong`,
       },
       HttpStatus.FORBIDDEN,
+    );
+  }
+  serverError() {
+    throw new HttpException(
+      {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        error: `Internal server error`,
+      },
+      HttpStatus.INTERNAL_SERVER_ERROR,
     );
   }
 }

@@ -9,9 +9,11 @@ import {
   Put,
   HttpCode,
   HttpStatus,
+  UseFilters,
 } from '@nestjs/common';
 import { Album } from '@prisma/client';
 import { ErrorHandler } from 'src/helpers/errorHandler';
+import { strGenerate } from 'src/helpers/str-generate';
 import { HttpExceptionFilter } from 'src/modules/logger/httpexception-filter.service';
 import { MyLogger } from 'src/modules/logger/logger.service';
 import { AlbumDto } from '../dto/albums.dto';
@@ -21,8 +23,10 @@ import { IAlbum } from '../interfaces/album.interface';
 import { AlbumsService } from '../services/albums.service';
 
 @Controller('album')
+@UseFilters(HttpExceptionFilter)
 export class AlbumsController {
   error = new ErrorHandler();
+  strGenerate = new strGenerate();
   constructor(
     private readonly albumsService: AlbumsService,
     private myLogger: MyLogger,
@@ -31,8 +35,16 @@ export class AlbumsController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async all(): Promise<IAlbum[]> {
-    this.myLogger.verbose(`Loading all albums..`);
-    return await this.albumsService.findAll();
+    const args = [`albums/`, 'GET', 'album'];
+    const msg = this.strGenerate.getVerbose(args);
+    this.myLogger.verbose(msg);
+    if (await this.albumsService.findAll()) {
+      const msg = this.strGenerate.getLog(args);
+      this.myLogger.log(msg);
+      return await this.albumsService.findAll();
+    } else {
+      this.error.serverError();
+    }
   }
 
   @Get(':id')
@@ -40,19 +52,31 @@ export class AlbumsController {
   async getById(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void | AlbumDto> {
-    this.myLogger.verbose(`Getting album with id ${id}`);
-    return (
-      (await this.albumsService.findOne(id)) || this.error.notFound('Album')
-    );
+    const args = [`albums/${id}`, 'GET', 'album', id];
+    const msg = this.strGenerate.getVerbose(args);
+    this.myLogger.verbose(msg);
+    if (await this.albumsService.findOne(id)) {
+      const msg = this.strGenerate.getLog(args);
+      this.myLogger.log(msg);
+      return await this.albumsService.findOne(id);
+    } else {
+      this.error.notFound('album', 'GET');
+    }
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createAlbumDto: CreateAlbumDto): Promise<IAlbum> {
-    this.myLogger.verbose(
-      `Creating a new album, data: ${JSON.stringify(createAlbumDto)}`,
-    );
-    return this.albumsService.create(createAlbumDto);
+    const args = [`albums/`, 'POST', 'album', JSON.stringify(createAlbumDto)];
+    const msg = this.strGenerate.postVerbose(args);
+    this.myLogger.verbose(msg);
+    if (this.albumsService.create(createAlbumDto)) {
+      const msg = this.strGenerate.postLog(args);
+      this.myLogger.log(msg);
+      return this.albumsService.create(createAlbumDto);
+    } else {
+      this.error.serverError();
+    }
   }
 
   @Put(':id')
@@ -60,22 +84,30 @@ export class AlbumsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
   ) {
-    this.myLogger.verbose(`Updating album with id ${id}`);
-    return (
-      (await this.albumsService.update(updateAlbumDto, id)) ||
-      this.error.notFound('Album')
-    );
+    const args = [`albums/`, 'PUT', 'album', id];
+    const msg = this.strGenerate.putVerbose(args);
+    this.myLogger.verbose(msg);
+    if (await this.albumsService.update(updateAlbumDto, id)) {
+      const msg = this.strGenerate.putLog(args);
+      this.myLogger.log(msg);
+      return await this.albumsService.update(updateAlbumDto, id);
+    } else {
+      this.error.notFound('album', 'PUT');
+    }
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id', ParseUUIDPipe) id: string): Promise<Album | void> {
-    this.myLogger.verbose(`Deleting album with id ${id}`);
-    return (
-      (await this.albumsService.delete(id)) || this.error.notFound('Album')
-    );
+    const args = [`albums/${id}`, 'DELETE', 'album', id];
+    const msg = this.strGenerate.deleteVerbose(args);
+    this.myLogger.verbose(msg);
+    if (await this.albumsService.delete(id)) {
+      const msg = this.strGenerate.deleteLog(args);
+      this.myLogger.log(msg);
+      return await this.albumsService.delete(id);
+    } else {
+      this.error.notFound('album', 'DELETE');
+    }
   }
-}
-function UseFilters(arg0: any) {
-  throw new Error('Function not implemented.');
 }

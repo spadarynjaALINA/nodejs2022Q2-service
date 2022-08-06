@@ -5,11 +5,9 @@ import { IArtist } from '../interfaces/artist.interface';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { Artist } from '@prisma/client';
-import { ErrorHandler } from 'src/helpers/errorHandler';
 @Injectable()
 export class ArtistsService {
   constructor(private prisma: PrismaService) {}
-  error = new ErrorHandler();
   async create(createArtistDto: CreateArtistDto): Promise<IArtist> {
     const newArtist = {
       ...createArtistDto,
@@ -22,15 +20,13 @@ export class ArtistsService {
     updateArtistDto: UpdateArtistDto,
     id: string,
   ): Promise<IArtist | void> {
-    if (!(await this.prisma.artist.findUnique({ where: { id } }))) {
-      this.error.notFound('Artist');
+    if (await this.prisma.artist.findUnique({ where: { id } })) {
+      return await this.prisma.artist.update({
+        where: { id },
+        data: updateArtistDto,
+      });
     }
-    return await this.prisma.artist.update({
-      where: { id },
-      data: updateArtistDto,
-    });
   }
-
   async delete(id: string): Promise<Artist | void> {
     const artist = await this.prisma.artist.findUnique({ where: { id } });
     if (artist) {

@@ -17,15 +17,30 @@ import { TrackDto } from '../dto/track.dto';
 import { CreateTrackDto } from '../dto/create-track.dto';
 import { UpdateTrackDto } from '../dto/update-track.dto';
 import { ITrack } from '../interfaces/track.interface';
+import { strGenerate } from 'src/helpers/str-generate';
+import { MyLogger } from 'src/modules/logger/logger.service';
 
 @Controller('track')
 export class TracksController {
-  constructor(private readonly tracksService: TracksService) {}
+  constructor(
+    private readonly tracksService: TracksService,
+    private myLogger: MyLogger,
+  ) {}
   error = new ErrorHandler();
+  strGenerate = new strGenerate();
   @Get()
   @HttpCode(HttpStatus.OK)
   async all(): Promise<ITrack[]> {
-    return await this.tracksService.findAll();
+    const args = [`track/`, 'GET', 'track'];
+    const msg = this.strGenerate.getVerbose(args);
+    this.myLogger.verbose(msg);
+    if (await this.tracksService.findAll()) {
+      const msg = this.strGenerate.getLog(args);
+      this.myLogger.log(msg);
+      return await this.tracksService.findAll();
+    } else {
+      this.error.serverError();
+    }
   }
 
   @Get(':id')
@@ -33,15 +48,30 @@ export class TracksController {
   async getById(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void | TrackDto> {
-    return (
-      (await this.tracksService.findOne(id)) || this.error.notFound('Track')
-    );
+    const args = [`track/`, 'GET', 'track'];
+    const msg = this.strGenerate.getVerbose(args);
+    this.myLogger.verbose(msg);
+    if (await this.tracksService.findOne(id)) {
+      const msg = this.strGenerate.getLog(args);
+      this.myLogger.log(msg);
+      return await this.tracksService.findOne(id);
+    }
+    this.error.notFound('track', id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createTrackDto: CreateTrackDto): Promise<ITrack> {
-    return this.tracksService.create(createTrackDto);
+    const args = [`track/`, 'POST', 'track'];
+    const msg = this.strGenerate.postVerbose(args);
+    this.myLogger.verbose(msg);
+    if (this.tracksService.create(createTrackDto)) {
+      const msg = this.strGenerate.postLog(args);
+      this.myLogger.log(msg);
+      return this.tracksService.create(createTrackDto);
+    } else {
+      this.error.serverError();
+    }
   }
 
   @Put(':id')
@@ -50,17 +80,30 @@ export class TracksController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTrackDto: UpdateTrackDto,
   ) {
-    return (
-      (await this.tracksService.update(updateTrackDto, id)) ||
-      this.error.notFound('Track')
-    );
+    const args = [`track/`, 'PUT', 'track'];
+    const msg = this.strGenerate.putVerbose(args);
+    this.myLogger.verbose(msg);
+    if (await this.tracksService.update(updateTrackDto, id)) {
+      const msg = this.strGenerate.putLog(args);
+      this.myLogger.log(msg);
+      return await this.tracksService.update(updateTrackDto, id);
+    } else {
+      this.error.notFound('track', id);
+    }
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id', ParseUUIDPipe) id: string): Promise<ITrack | void> {
-    return (
-      (await this.tracksService.delete(id)) || this.error.notFound('Track')
-    );
+    const args = [`track/`, 'DELETE', 'track'];
+    const msg = this.strGenerate.deleteVerbose(args);
+    this.myLogger.verbose(msg);
+    if (await this.tracksService.delete(id)) {
+      const msg = this.strGenerate.deleteLog(args);
+      this.myLogger.log(msg);
+      return await this.tracksService.delete(id);
+    } else {
+      this.error.notFound('track', id);
+    }
   }
 }

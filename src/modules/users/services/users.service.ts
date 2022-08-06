@@ -50,6 +50,7 @@ export class UsersService {
   ): Promise<IUserResponse | void | Prisma.BatchPayload> {
     const updatedUser = await this.prisma.user.findUnique({ where: { id } });
     if (updatedUser) {
+      console.log(updatedUser.password, updatePasswordDto.oldPassword);
       if (updatedUser.password === updatePasswordDto.oldPassword) {
         const newUpdate = Date.now();
         await this.prisma.user.updateMany({

@@ -9,6 +9,11 @@ import { PrismaModule } from './modules/prisma/prisma.module';
 import { LoggerMiddleware } from './modules/logger/logger.middleware';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './modules/logger/httpexception-filter.service';
+import { UsersController } from './modules/users/controllers/users.controller';
+import { ArtistsController } from './modules/artists/controllers/artists.controller';
+import { AlbumsController } from './modules/albums/controllers/albums.controller';
+import { TracksController } from './modules/tracks/controllers/tracks.controller';
+import { FavoritesController } from './modules/favorites/controllers/favorites.controller';
 @Module({
   imports: [
     ArtistsModule,
@@ -27,6 +32,15 @@ import { HttpExceptionFilter } from './modules/logger/httpexception-filter.servi
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('cats');
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes(
+        UsersController,
+        ArtistsController,
+        AlbumsController,
+        TracksController,
+        FavoritesController,
+        ArtistsController,
+      );
   }
 }

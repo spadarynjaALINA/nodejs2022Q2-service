@@ -4,12 +4,12 @@ import { CONSOLE_COLORS } from './../../../constants';
 import 'dotenv/config';
 
 export class MyLogger implements LoggerService {
-  log(message: any, ...optionalParams: any[]) {
+  log(message: any) {
     console.log(message);
   }
 
-  error(message: any, ...optionalParams: any[]) {
-    console.log(message, optionalParams);
+  error(message: any) {
+    console.log(message);
   }
 
   warn(message: any, ...optionalParams: any[]) {
@@ -20,7 +20,7 @@ export class MyLogger implements LoggerService {
     console.log(message, optionalParams);
   }
 
-  verbose(message: any, ...optionalParams: any[]) {
-    console.log(message, optionalParams);
+  verbose(message: any) {
+    console.log(message);
   }
 }
