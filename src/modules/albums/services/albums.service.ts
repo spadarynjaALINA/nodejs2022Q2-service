@@ -5,6 +5,7 @@ import { IAlbum } from '../interfaces/album.interface';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { Album } from '@prisma/client';
+import { MyLogger } from 'src/modules/logger/logger.service';
 @Injectable()
 export class AlbumsService {
   constructor(private prisma: PrismaService) {}
@@ -14,6 +15,7 @@ export class AlbumsService {
       ...createAlbumsDto,
       id: uuidv4(),
     };
+
     return await this.prisma.album.create({ data: newAlbum });
   }
 

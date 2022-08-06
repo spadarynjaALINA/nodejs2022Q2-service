@@ -1,7 +1,10 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { MyLogger } from 'src/modules/logger/logger.service';
 
 export class ErrorHandler {
+  myLogger = new MyLogger();
   notFound(type: string) {
+    this.myLogger.error(`${type} not found`);
     throw new HttpException(
       {
         status: HttpStatus.NOT_FOUND,
