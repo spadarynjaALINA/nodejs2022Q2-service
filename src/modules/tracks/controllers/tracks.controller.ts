@@ -56,7 +56,7 @@ export class TracksController {
       this.myLogger.log(msg);
       return await this.tracksService.findOne(id);
     }
-    this.error.notFound('track', id);
+    this.error.notFound('track', 'GET');
   }
 
   @Post()
@@ -88,7 +88,7 @@ export class TracksController {
       this.myLogger.log(msg);
       return await this.tracksService.update(updateTrackDto, id);
     } else {
-      this.error.notFound('track', id);
+      this.error.notFound('track', 'PUT');
     }
   }
 
@@ -103,7 +103,7 @@ export class TracksController {
       this.myLogger.log(msg);
       return await this.tracksService.delete(id);
     } else {
-      this.error.notFound('track', id);
+      this.error.notFound('track', 'DELETE');
     }
   }
 }

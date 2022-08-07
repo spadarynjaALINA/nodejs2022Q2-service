@@ -58,7 +58,7 @@ export class UsersController {
       this.myLogger.log(msg);
       return await this.usersService.findOne(id);
     } else {
-      this.error.notFound('user', id);
+      this.error.notFound('user', 'GET');
     }
   }
 
@@ -93,7 +93,7 @@ export class UsersController {
       this.myLogger.log(msg);
       return user;
     }
-    this.error.notFound('user', id);
+    this.error.notFound('user', 'PUT');
   }
 
   @Delete(':id')
@@ -107,7 +107,7 @@ export class UsersController {
       this.myLogger.log(msg);
       return await this.usersService.delete(id);
     } else {
-      this.error.notFound('user', id);
+      this.error.notFound('user', 'DELETE');
     }
   }
 }

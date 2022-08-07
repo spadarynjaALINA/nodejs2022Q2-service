@@ -59,7 +59,7 @@ export class ArtistsController {
       this.myLogger.log(msg);
       return await this.artistsService.findOne(id);
     } else {
-      this.error.notFound('artist', id);
+      this.error.notFound('artist', 'GET');
     }
   }
 
@@ -92,7 +92,7 @@ export class ArtistsController {
       this.myLogger.log(msg);
       return await this.artistsService.update(updateArtistDto, id);
     } else {
-      this.error.notFound('artist', id);
+      this.error.notFound('artist', 'PUT');
     }
   }
 
@@ -107,7 +107,7 @@ export class ArtistsController {
       this.myLogger.log(msg);
       return await this.artistsService.delete(id);
     } else {
-      this.error.notFound('artist', id);
+      this.error.notFound('artist', 'DELETE');
     }
   }
 }

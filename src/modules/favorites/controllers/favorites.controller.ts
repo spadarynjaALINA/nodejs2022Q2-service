@@ -76,7 +76,7 @@ export class FavoritesController {
       this.myLogger.log(msg);
       return await this.favoritesService.delete(type, id);
     } else {
-      this.error.notFound(type, id);
+      this.error.notFound(type, 'DELETE');
     }
   }
 }
