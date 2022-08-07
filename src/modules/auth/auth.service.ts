@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { LoginDto } from '../users/dto/login.dto';
-
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import { UsersService } from '../users/services/users.service';
 import { JwtService } from '@nestjs/jwt';
+import jwt_decode from 'jwt-decode';
 import 'dotenv/config';
+import { ErrorHandler } from 'src/helpers/errorHandler';
 @Injectable()
 export class AuthService {
   constructor(
@@ -13,26 +14,49 @@ export class AuthService {
     private userService: UsersService,
     private jwt: JwtService,
   ) {}
+  error = new ErrorHandler();
   async signup(loginDto: LoginDto) {
     const user = await this.userService.create(loginDto);
-    return this.signToken(user.id, user.login);
+    return user;
   }
+
   async login(loginDto: LoginDto) {
     const user = await this.prisma.user.findFirst({
       where: { login: loginDto.login },
     });
     if (user) {
-      const pasMatch = await bcrypt.compare(user.password, loginDto.password);
+      const pasMatch = bcrypt.compare(loginDto.password, user.password);
+
       if (pasMatch) {
-        return await this.signToken(user.id, user.login);
+        const { accessToken, refreshToken } = await this.getTokens(
+          user.id,
+          user.login,
+        );
+        await this.updateRtHash(user.id, refreshToken);
+        return { accessToken, refreshToken };
+      } else {
+        return this.error.forbidden();
       }
     }
   }
-  refresh() {
-    return 'login';
+  async refresh(rt: string) {
+    const decoded: { sub: string; login: string } = jwt_decode(rt);
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: decoded.sub,
+      },
+    });
+    if (user && user.hashedRt) {
+      const pasMatch = await bcrypt.compare(user.hashedRt, rt);
+      if (pasMatch) {
+        const tokens = await this.getTokens(user.id, user.login);
+        await this.updateRtHash(user.id, tokens.refreshToken);
+        return tokens;
+      }
+    }
   }
 
-  async signToken(userId: string, userLogin: string) {
+  async getTokens(userId: string, userLogin: string) {
     const payload = {
       sub: userId,
       email: userLogin,
@@ -41,8 +65,23 @@ export class AuthService {
       expiresIn: process.env.TOKEN_EXPIRE_TIME,
       secret: process.env.JWT_SECRET_KEY,
     });
-    return {
-      access_token: token,
-    };
+    const rToken = this.jwt.signAsync(payload, {
+      expiresIn: process.env.TOKEN_EXPIRE_TIME,
+      secret: process.env.TOKEN_REFRESH_EXPIRE_TIME,
+    });
+    const [accessToken, refreshToken] = await Promise.all([token, rToken]);
+    return { accessToken, refreshToken };
+  }
+
+  async updateRtHash(userId: string, rt: string) {
+    const hash = await bcrypt.hash(rt, 10);
+    return await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        hashedRt: hash,
+      },
+    });
   }
 }

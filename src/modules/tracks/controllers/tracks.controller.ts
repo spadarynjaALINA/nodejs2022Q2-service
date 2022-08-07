@@ -9,6 +9,7 @@ import {
   Put,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 
 import { ErrorHandler } from 'src/helpers/errorHandler';
@@ -19,8 +20,10 @@ import { UpdateTrackDto } from '../dto/update-track.dto';
 import { ITrack } from '../interfaces/track.interface';
 import { strGenerate } from 'src/helpers/str-generate';
 import { MyLogger } from 'src/modules/logger/logger.service';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 
 @Controller('track')
+@UseGuards(JwtAuthGuard)
 export class TracksController {
   constructor(
     private readonly tracksService: TracksService,

@@ -10,10 +10,12 @@ import {
   HttpCode,
   HttpStatus,
   UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { ErrorHandler } from 'src/helpers/errorHandler';
 import { strGenerate } from 'src/helpers/str-generate';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { HttpExceptionFilter } from 'src/modules/logger/httpexception-filter.service';
 import { MyLogger } from 'src/modules/logger/logger.service';
 import { LoginDto } from '../dto/login.dto';
@@ -23,6 +25,7 @@ import { IUserResponse } from '../interfaces/user.interface';
 import { UsersService } from '../services/users.service';
 
 @Controller('user')
+@UseGuards(JwtAuthGuard)
 @UseFilters(HttpExceptionFilter)
 export class UsersController {
   error = new ErrorHandler();

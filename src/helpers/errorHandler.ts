@@ -76,4 +76,13 @@ export class ErrorHandler {
       HttpStatus.INTERNAL_SERVER_ERROR,
     );
   }
+  forbidden() {
+    throw new HttpException(
+      {
+        status: HttpStatus.FORBIDDEN,
+        error: `Forbidden`,
+      },
+      HttpStatus.FORBIDDEN,
+    );
+  }
 }

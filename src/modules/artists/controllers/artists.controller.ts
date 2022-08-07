@@ -10,10 +10,12 @@ import {
   HttpCode,
   HttpStatus,
   UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 import { Artist } from '@prisma/client';
 import { ErrorHandler } from 'src/helpers/errorHandler';
 import { strGenerate } from 'src/helpers/str-generate';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { HttpExceptionFilter } from 'src/modules/logger/httpexception-filter.service';
 import { MyLogger } from 'src/modules/logger/logger.service';
 import { CreateArtistDto } from '../dto/create-artist.dto';
@@ -22,6 +24,7 @@ import { IArtist } from '../interfaces/artist.interface';
 import { ArtistsService } from '../services/artists.service';
 
 @Controller('artist')
+@UseGuards(JwtAuthGuard)
 @UseFilters(HttpExceptionFilter)
 export class ArtistsController {
   error = new ErrorHandler();

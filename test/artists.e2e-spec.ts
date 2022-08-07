@@ -217,6 +217,7 @@ describe('artist (e2e)', () => {
       expect(response.status).toBe(StatusCodes.NOT_FOUND);
     });
   });
+
   describe('DELETE', () => {
     it('should correctly delete artist', async () => {
       const response = await unauthorizedRequest

@@ -10,10 +10,13 @@ import {
   HttpCode,
   HttpStatus,
   UseFilters,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Album } from '@prisma/client';
 import { ErrorHandler } from 'src/helpers/errorHandler';
 import { strGenerate } from 'src/helpers/str-generate';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { HttpExceptionFilter } from 'src/modules/logger/httpexception-filter.service';
 import { MyLogger } from 'src/modules/logger/logger.service';
 import { AlbumDto } from '../dto/albums.dto';
@@ -23,6 +26,7 @@ import { IAlbum } from '../interfaces/album.interface';
 import { AlbumsService } from '../services/albums.service';
 
 @Controller('album')
+@UseGuards(JwtAuthGuard)
 @UseFilters(HttpExceptionFilter)
 export class AlbumsController {
   error = new ErrorHandler();

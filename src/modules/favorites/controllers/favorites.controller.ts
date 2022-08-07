@@ -8,10 +8,12 @@ import {
   Post,
   HttpStatus,
   UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 
 import { ErrorHandler } from 'src/helpers/errorHandler';
 import { strGenerate } from 'src/helpers/str-generate';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { HttpExceptionFilter } from 'src/modules/logger/httpexception-filter.service';
 import { MyLogger } from 'src/modules/logger/logger.service';
 
@@ -20,6 +22,7 @@ import { FavoritesResponse } from '../dto/add-favorites.dto';
 import { FavoritesService } from '../services/favorites.service';
 
 @Controller('favs')
+@UseGuards(JwtAuthGuard)
 @UseFilters(HttpExceptionFilter)
 export class FavoritesController {
   error = new ErrorHandler();
