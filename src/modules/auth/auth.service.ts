@@ -32,14 +32,17 @@ export class AuthService {
     return 'login';
   }
 
-  async signToken(userId: string, userLogin: string): Promise<string> {
+  async signToken(userId: string, userLogin: string) {
     const payload = {
       sub: userId,
       email: userLogin,
     };
-    return this.jwt.signAsync(payload, {
+    const token = this.jwt.signAsync(payload, {
       expiresIn: process.env.TOKEN_EXPIRE_TIME,
       secret: process.env.JWT_SECRET_KEY,
     });
+    return {
+      access_token: token,
+    };
   }
 }
