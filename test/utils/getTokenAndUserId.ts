@@ -13,13 +13,11 @@ const getTokenAndUserId = async (request) => {
     .send(createUserDto);
 
   const mockUserId = response.body.id;
-
   // get token
   const response2 = await request
     .post(authRoutes.login)
     .set('Accept', 'application/json')
     .send(createUserDto);
-
   const token = `Bearer ${response2.body.accessToken}`;
 
   return { token, mockUserId };

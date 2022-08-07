@@ -6,7 +6,7 @@ export interface IUser {
   createdAt: number; // timestamp of creation
   updatedAt: number; // timestamp of last update
 }
-export interface IUserResponce {
+export interface IUserResponse {
   id: string; // uuid v4
   login: string;
   version: number; // integer number, increments on update

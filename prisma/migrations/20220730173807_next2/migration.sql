@@ -1,0 +1,11 @@
+-- CreateTable
+CREATE TABLE "user" (
+    "id" TEXT NOT NULL,
+    "login" VARCHAR(200) NOT NULL,
+    "password" VARCHAR(200) NOT NULL,
+    "version" INTEGER NOT NULL DEFAULT 1,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "user_pkey" PRIMARY KEY ("id")
+);

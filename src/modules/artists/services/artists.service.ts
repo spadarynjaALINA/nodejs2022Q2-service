@@ -1,34 +1,53 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UpdateArtistDto } from '../dto/update-artist.dto';
-import { ArtistsStore } from '../schemas/artists.interface';
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { IArtist } from '../interfaces/artist.interface';
-import { ArtistDto } from '../dto/artist.tdo';
-
+import { v4 as uuidv4 } from 'uuid';
+import { PrismaService } from 'src/modules/prisma/prisma.service';
+import { Artist } from '@prisma/client';
 @Injectable()
 export class ArtistsService {
-  constructor(@Inject('ArtistsStore') private storage: ArtistsStore) {}
-
-  async create(createArtistsDto: CreateArtistDto): Promise<IArtist> {
-    return this.storage.create(createArtistsDto);
-  }
-
-  async delete(id: string): Promise<string | void> {
-    return this.storage.delete(id);
-  }
-
-  async findAll(): Promise<IArtist[]> {
-    return this.storage.all();
-  }
-
-  async findOne(id: string): Promise<ArtistDto> {
-    return this.storage.findById(id);
+  constructor(private prisma: PrismaService) {}
+  async create(createArtistDto: CreateArtistDto): Promise<IArtist> {
+    const newArtist = {
+      ...createArtistDto,
+      id: uuidv4(),
+    };
+    return await this.prisma.artist.create({ data: newArtist });
   }
 
   async update(
     updateArtistDto: UpdateArtistDto,
     id: string,
   ): Promise<IArtist | void> {
-    return await this.storage.update(updateArtistDto, id);
+    if (await this.prisma.artist.findUnique({ where: { id } })) {
+      return await this.prisma.artist.update({
+        where: { id },
+        data: updateArtistDto,
+      });
+    }
+  }
+  async delete(id: string): Promise<Artist | void> {
+    const artist = await this.prisma.artist.findUnique({ where: { id } });
+    if (artist) {
+      await this.prisma.album.updateMany({
+        where: { artistId: { equals: id } },
+        data: { artistId: null },
+      });
+      await this.prisma.track.updateMany({
+        where: { artistId: { equals: id } },
+        data: { artistId: null },
+      });
+      await this.prisma.artist.delete({ where: { id } });
+      return artist;
+    }
+  }
+
+  async findAll(): Promise<IArtist[]> {
+    return await this.prisma.artist.findMany();
+  }
+
+  async findOne(id: string): Promise<IArtist> {
+    return await this.prisma.artist.findUnique({ where: { id } });
   }
 }
