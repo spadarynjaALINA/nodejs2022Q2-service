@@ -12,7 +12,6 @@ async function bootstrap() {
     bufferLogs: true,
   });
   app.useLogger(app.get(MyLogger));
-
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   logger.log(`Application listening on port ${PORT}`);

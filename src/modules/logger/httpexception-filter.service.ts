@@ -8,18 +8,26 @@ import {
 import { Request, Response } from 'express';
 import { CustomHttpExceptionResponse } from './interfaces/exeptions.interfaces';
 import * as fs from 'fs';
+import { MyLogger } from './logger.service';
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+    const logger = new MyLogger();
     let errorMessage: string;
     const status =
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
+    process.on('unhandledRejection', (error) => {
+      throw error;
+    });
 
+    process.on('uncaughtException', (error) => {
+      logger.error(error);
+    });
     const responseBody = this.getErrorResponse(status, errorMessage, request);
     const errorLog = this.getErrorLog(responseBody, request, exception);
     this.writeErrorLogToFile(errorLog);
