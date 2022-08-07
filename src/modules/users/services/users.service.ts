@@ -6,26 +6,26 @@ import { IUserResponse } from '../interfaces/user.interface';
 import { v4 as uuidv4 } from 'uuid';
 import { Prisma, User } from '@prisma/client';
 import { ErrorHandler } from 'src/helpers/errorHandler';
-
+import * as bcrypt from 'bcryptjs';
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
   error = new ErrorHandler();
+
   async create(loginDto: LoginDto): Promise<IUserResponse> {
-    const newUpdate = Date.now();
-    const userResponse = {
+    const hash = await bcrypt.hash(loginDto.password, 10);
+    const now = Date.now();
+    const newUser = {
       login: loginDto.login,
       id: uuidv4(),
+      password: hash,
       version: 1,
-      createdAt: newUpdate,
-      updatedAt: newUpdate,
-    };
-    const newUser = {
-      ...userResponse,
-      password: loginDto.password,
+      createdAt: now,
+      updatedAt: now,
     };
     await this.prisma.user.create({ data: newUser });
-    return userResponse;
+    delete newUser.password;
+    return newUser;
   }
 
   async delete(id: string): Promise<User | void> {

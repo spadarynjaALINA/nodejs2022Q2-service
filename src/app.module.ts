@@ -14,6 +14,9 @@ import { ArtistsController } from './modules/artists/controllers/artists.control
 import { AlbumsController } from './modules/albums/controllers/albums.controller';
 import { TracksController } from './modules/tracks/controllers/tracks.controller';
 import { FavoritesController } from './modules/favorites/controllers/favorites.controller';
+import { AuthController } from './modules/auth/auth.controller';
+import { AuthModule } from './modules/auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
     ArtistsModule,
@@ -22,6 +25,8 @@ import { FavoritesController } from './modules/favorites/controllers/favorites.c
     FavoritesModule,
     UsersModule,
     PrismaModule,
+    AuthModule,
+    ConfigModule.forRoot(),
   ],
   providers: [
     {
@@ -29,6 +34,7 @@ import { FavoritesController } from './modules/favorites/controllers/favorites.c
       useClass: HttpExceptionFilter,
     },
   ],
+  controllers: [AuthController],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
@@ -41,6 +47,7 @@ export class AppModule implements NestModule {
         TracksController,
         FavoritesController,
         ArtistsController,
+        AuthController,
       );
   }
 }
