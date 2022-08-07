@@ -1,0 +1,15 @@
+export const CONSOLE_COLORS = {
+  blue: '\x1b[34m',
+  green: '\x1b[32m',
+  red: '\x1b[31m',
+  magenta: '\x1b[35m',
+  yellow: '\x1b[33m',
+  cyan: '\x1b[36m',
+  reset: '\x1b[0m',
+  BGred: '\x1b[41m',
+  BGgreen: '\x1b[42m',
+  BGmagenta: '\x1b[45m',
+  BGblue: '\x1b[44m',
+  BGyellow: '\x1b[43m',
+  BGcyan: '\x1b[46m',
+};

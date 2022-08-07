@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -7,43 +6,77 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  Put,
+  HttpStatus,
+  UseFilters,
 } from '@nestjs/common';
-import { url } from 'inspector';
-import { ErrorHandler } from 'src/errorsHandler/errorHandler';
-import { URL } from 'url';
-import { FavoritesRepsonse } from '../dto/add-favorites.dto';
-import { FavoriteDto } from '../dto/favorites.dto';
-import { IFavorite } from '../interfaces/favorite.interface';
+
+import { ErrorHandler } from 'src/helpers/errorHandler';
+import { strGenerate } from 'src/helpers/str-generate';
+import { HttpExceptionFilter } from 'src/modules/logger/httpexception-filter.service';
+import { MyLogger } from 'src/modules/logger/logger.service';
+
+import { FavoritesResponse } from '../dto/add-favorites.dto';
+
 import { FavoritesService } from '../services/favorites.service';
 
 @Controller('favs')
+@UseFilters(HttpExceptionFilter)
 export class FavoritesController {
   error = new ErrorHandler();
-  constructor(private readonly favoritesService: FavoritesService) {}
+  strGenerate = new strGenerate();
+  constructor(
+    private readonly favoritesService: FavoritesService,
+    private myLogger: MyLogger,
+  ) {}
 
   @Get()
-  async all(): Promise<FavoritesRepsonse> {
-    return await this.favoritesService.findAll();
+  @HttpCode(HttpStatus.OK)
+  async all(): Promise<FavoritesResponse> {
+    const args = [`favs`, 'GET', 'favorite'];
+    const msg = this.strGenerate.getVerbose(args);
+    this.myLogger.verbose(msg);
+    if (await this.favoritesService.findAll()) {
+      const msg = this.strGenerate.getLog(args);
+      this.myLogger.log(msg);
+      return await this.favoritesService.findAll();
+    } else {
+      this.error.serverError();
+    }
   }
 
   @Post('/:type/:id')
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   async add(
     @Param('type') type: string,
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<void> {
-    return await this.favoritesService.add(type, id);
+  ) {
+    const args = [`favs/${type}/${id}`, 'GET', 'favorite'];
+    const msg = this.strGenerate.postVerbose(args);
+    this.myLogger.verbose(msg);
+    if (await this.favoritesService.add(type, id)) {
+      const msg = this.strGenerate.postLog(args);
+      this.myLogger.log(msg);
+      return await this.favoritesService.add(type, id);
+    } else {
+      this.error.notExist(type);
+    }
   }
 
   @Delete('/:type/:id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async delete(
     @Param('type') type: string,
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<string | void> {
-    const track = await this.favoritesService.delete(type, id);
-
-    return track;
+  ) {
+    const args = [`favs/${type}/${id}`, 'GET', 'favorite'];
+    const msg = this.strGenerate.deleteVerbose(args);
+    this.myLogger.verbose(msg);
+    if (await this.favoritesService.delete(type, id)) {
+      const msg = this.strGenerate.deleteLog(args);
+      this.myLogger.log(msg);
+      return await this.favoritesService.delete(type, id);
+    } else {
+      this.error.notFound(type, 'DELETE');
+    }
   }
 }

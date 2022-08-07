@@ -1,5 +1,5 @@
 import { validate } from 'uuid';
-import { StatusCodes } from 'http-status-codes';
+
 import { request } from './lib';
 import {
   getTokenAndUserId,
@@ -7,6 +7,7 @@ import {
   removeTokenUser,
 } from './utils';
 import { tracksRoutes } from './endpoints';
+import { StatusCodes } from 'http-status-codes';
 
 const createTrackDto = {
   name: 'TEST_TRACK',

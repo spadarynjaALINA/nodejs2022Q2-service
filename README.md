@@ -16,9 +16,23 @@ npm install
 ## Running application
 
 ```
-npm run start:dev
+docker compose up
 ```
+## Deploy db
 
+```
+npx prisma studio
+```
+## Lint
+
+```
+npm run lint
+```
+## Restart
+
+```
+npm run db:dev:restart
+```
 
 ## Testing
 
