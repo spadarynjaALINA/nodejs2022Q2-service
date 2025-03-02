@@ -37,19 +37,17 @@ export class InMemoryArtistsStore implements ArtistsStore {
         }
         return artist;
       });
-      console.log(this.findById(id));
+
       return this.findById(id);
     }
   }
   delete(id: string): string | void {
     const artist = this.findById(id);
-    console.log(artist);
     if (!!artist) {
       this.bd.albums.forEach((album) => {
         if (album.artistId === id) album.artistId = null;
       });
       this.bd.tracks.forEach((track) => {
-        console.log(track.artistId, id);
         if (track.artistId === id) track.artistId = null;
       });
       this.bd.favorites.artists.forEach((item) => {

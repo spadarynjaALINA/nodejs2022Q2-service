@@ -15,7 +15,6 @@ export class AlbumsService {
   }
 
   async delete(id: string): Promise<string | void> {
-    console.log(await this.storage.delete(id), 'services');
     return await this.storage.delete(id);
   }
 
